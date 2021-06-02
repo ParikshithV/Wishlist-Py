@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block head %} 
+<title>Wishlist</title>
+{% endblock %}
+
+{% block body %}
+<h1>Wishlist</h1>
+<h3>Register:</h3>
+<div class="content"></div>
+    <form action="/register", method="POST">
+        <label>Username : </label>
+        <input class="txtbx" type="text" id="username" name="username" placeholder="Required" required><br>
+        <label>Enter new password : </label>
+        <input  class="txtbx" name="password" type="password" id="password" required placeholder="Enter Password" /><br><br>
+        <!-- pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" -->
+        <input type="submit"/>
+    </form>
+</div>
+{% endblock %}
