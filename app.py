@@ -20,17 +20,6 @@ meta = MetaData()
 
 engine = create_engine('sqlite:///wishlist.db', echo = True)
 
-class Wishlist(db.Model):
-    name = db.Column(db.String, primary_key=True)
-    link = db.Column(db.String)    #add nullable=False
-    site_name = db.Column(db.String)
-    image = db.Column(db.Unicode)
-    price = db.Column(db.String, default=0)
-    date_added = db.Column(db.DateTime, default=datetime_ind)
-
-    def __repr__(self):
-        return '<Item %r>' % self.id
-
 class Users(db.Model):
     username = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)    
@@ -38,13 +27,9 @@ class Users(db.Model):
     def __repr__(self):
         return '<Item %r>' % self.id
 
-
 @app.route('/', methods=['POST','GET'])
 def index():
     if 'username' in session:
-        tables_dict = {table.__tablename__: table for table in db.Model.__subclasses__()}
-        def table_object(table_name):
-            return tables_dict.get(table_name)
 
         username = session['username']
         class Model(db.Model):
@@ -67,7 +52,7 @@ def index():
                 name = soup.find('h2', class_ = "product-name").string
                 image = soup.find_all('img')
                 image_link = image[2]['src']
-                time.sleep(3)
+                # time.sleep(3)
                 new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
 
                 db.session.add(new_item)
@@ -141,16 +126,11 @@ def signin():
         else:
             return 'User does not exist <br><a href="/signin">Try again</a>'
     else:
-        return render_template('signin.html')
-    
-            
+        return render_template('signin.html')        
 
 @app.route('/delete/<string:name>')
 def delete(name):
     if 'username' in session:
-        tables_dict = {table.__tablename__: table for table in db.Model.__subclasses__()}
-        def table_object(table_name):
-            return tables_dict.get(table_name)
 
         username = session['username']
 
