@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, insert, Unicode
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, insert, Unicode, DateTime
 from datetime import datetime
 import pytz
 import time
@@ -41,35 +41,43 @@ class Users(db.Model):
 
 @app.route('/', methods=['POST','GET'])
 def index():
-    conn = engine.connect()
     if 'username' in session:
         tables_dict = {table.__tablename__: table for table in db.Model.__subclasses__()}
         def table_object(table_name):
             return tables_dict.get(table_name)
 
         username = session['username']
+        class Model(db.Model):
+            __tablename__=username
+            __table_args__ = {'extend_existing': True} 
+            name = db.Column(db.String, primary_key=True)
+            link = db.Column(db.String)    #add nullable=False
+            site_name = db.Column(db.String)
+            image = db.Column(db.Unicode)
+            price = db.Column(db.String, default=0)
+            date_added = db.Column(db.DateTime, default=datetime_ind)
         
         if request.method == 'POST':
-            __tablename__=username
-            item_name = request.form['content']
-            #try:
-            req = requests.get(item_name)
-            soup = BeautifulSoup(req.content,'html.parser')
-            price = soup.find('span',id="our_price_display").string
-            name = soup.find('h2', class_ = "product-name").string
-            image = soup.find_all('img')
-            image_link = image[2]['src']
-            time.sleep(3)
-            stmt = username.insert().values(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
 
-            conn = engine.connect()
-            conn.execute(stmt)
-            return redirect('/')
-            # except:
-            #     return 'Error adding item'
+            item_name = request.form['content']
+            try:
+                req = requests.get(item_name)
+                soup = BeautifulSoup(req.content,'html.parser')
+                price = soup.find('span',id="our_price_display").string
+                name = soup.find('h2', class_ = "product-name").string
+                image = soup.find_all('img')
+                image_link = image[2]['src']
+                time.sleep(3)
+                new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
+
+                db.session.add(new_item)
+                db.session.commit()
+                return redirect('/')
+            except:
+                return redirect('/')
         
         else:
-            items = db.session.query(table_object(table_name=username)).all()
+            items = Model.query.order_by(Model.date_added).all()
             return render_template('index.html', items=items)
     else:
         return redirect('/signin')
@@ -82,7 +90,7 @@ def register():
 
     users = Table(
         'users', meta, 
-        Column('name', String, primary_key = True), 
+        Column('username', String, primary_key = True), 
         Column('password', String),
     )
     
@@ -99,7 +107,7 @@ def register():
             Column('site_name', String),
             Column('image', Unicode),
             Column('price', String, default=0),
-            #Column('date_added', DateTime, default=datetime_ind),
+            Column('date_added', DateTime, default=datetime_ind),
         )
         meta.create_all(usersdb)
 
@@ -139,14 +147,33 @@ def signin():
 
 @app.route('/delete/<string:name>')
 def delete(name):
-    item_to_delete = Wishlist.query.get_or_404(name)
+    if 'username' in session:
+        tables_dict = {table.__tablename__: table for table in db.Model.__subclasses__()}
+        def table_object(table_name):
+            return tables_dict.get(table_name)
 
-    try:
-        db.session.delete(item_to_delete)
-        db.session.commit()
-        return redirect('/')
-    except:
-        return 'Error deleting data'
+        username = session['username']
 
+        class Model(db.Model):
+            __tablename__=username
+            __table_args__ = {'extend_existing': True} 
+            name = db.Column(db.String, primary_key=True)
+            link = db.Column(db.String)    #add nullable=False
+            site_name = db.Column(db.String)
+            image = db.Column(db.Unicode)
+            price = db.Column(db.String, default=0)
+            date_added = db.Column(db.DateTime, default=datetime_ind)
+
+        item_to_delete = Model.query.get_or_404(name)
+
+        try:
+            # Model.query.filter_by(name=name).delete()
+            db.session.delete(item_to_delete)
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'Error deleting data'
+    else:
+        return redirect('/')        
 if __name__ == "__main__":
     app.run(debug=True)
