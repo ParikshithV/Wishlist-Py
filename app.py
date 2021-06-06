@@ -78,7 +78,92 @@ def index():
                     return redirect('/')
                 except:
                     return redirect('/')
-        
+            if 'kavoos' in item_name :
+                try:
+                    req = requests.get(item_name)
+                    soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('span',class_="pd-price")
+                    name = soup.find('div', class_ = "product-name")
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    new_item = Model(name=name, link=item_name, site_name='kavoos', image=image_link, price=price)
+
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')
+            if 'juneshop' in item_name :
+                try:
+                    req = requests.get(item_name)
+                    soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('span',class_="ProductMeta__Price Price Price--highlight Text--subdued u-h4")
+                    name = soup.find('h1', class_ ="ProductMeta__Title Heading u-h2")
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    new_item = Model(name=name, link=item_name, site_name='juneshop', image=image_link, price=price)
+
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')  
+            if 'home4u' in item_name :
+                try:
+                    req = requests.get(item_name)
+                    soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('span',id="ProductPrice-6751746064539")
+                    name = soup.find('h1', class_ ="h2 product-single__title")
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')                       
+            if 'pepperfry' in item_name :
+                try:
+                    req = requests.get(item_name)
+                    soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('span',class_="v-price-mrp-amt-only")
+                    name = soup.find('h1', class_ ="v-pro-ttl pf-medium-bold-text")
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')
+            if 'ladder' in item_name :
+                try:
+                    req = requests.get(item_name)
+                    soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('div',class_="price discounted-price")
+                    name = soup.find('h1', class_ ="product-title")
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')
+            if 'hm' in item_name :
+                try:
+                    req = requests.get(item_name)
+                    soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('div', class_ = "ProductPrice-module--productItemPrice__2rpyB")
+                    name = soup.find('h1', class_ = "primary product-item-headline")
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')
         else:
             items = Model.query.order_by(Model.date_added).all()
             return render_template('index.html', items=items)
