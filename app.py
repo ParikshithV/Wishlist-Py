@@ -82,8 +82,8 @@ def index():
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',class_="pd-price")
-                    name = soup.find('div', class_ = "product-name")
+                    price = soup.find('span',class_="pd-price").string
+                    name = soup.find('div', class_ = "product-name").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
                     new_item = Model(name=name, link=item_name, site_name='kavoos', image=image_link, price=price)
@@ -97,8 +97,8 @@ def index():
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',class_="ProductMeta__Price Price Price--highlight Text--subdued u-h4")
-                    name = soup.find('h1', class_ ="ProductMeta__Title Heading u-h2")
+                    price = soup.find('span',class_="ProductMeta__Price Price Price--highlight Text--subdued u-h4").string
+                    name = soup.find('h1', class_ ="ProductMeta__Title Heading u-h2").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
                     new_item = Model(name=name, link=item_name, site_name='juneshop', image=image_link, price=price)
@@ -112,8 +112,8 @@ def index():
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',id="ProductPrice-6751746064539")
-                    name = soup.find('h1', class_ ="h2 product-single__title")
+                    price = soup.find('span',id="ProductPrice-6751746064539").string
+                    name = soup.find('h1', class_ ="h2 product-single__title").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
                     new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
@@ -126,8 +126,8 @@ def index():
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',class_="v-price-mrp-amt-only")
-                    name = soup.find('h1', class_ ="v-pro-ttl pf-medium-bold-text")
+                    price = soup.find('span',class_="v-price-mrp-amt-only").string
+                    name = soup.find('h1', class_ ="v-pro-ttl pf-medium-bold-text").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
                     new_item = Model(name=name, link=item_name, site_name='pepperfry', image=image_link, price=price)
@@ -140,8 +140,8 @@ def index():
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('div',class_="price discounted-price")
-                    name = soup.find('h1', class_ ="product-title")
+                    price = soup.find('div',class_="price discounted-price").string
+                    name = soup.find('h1', class_ ="product-title").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
                     new_item = Model(name=name, link=item_name, site_name='ladder', image=image_link, price=price)
@@ -154,8 +154,8 @@ def index():
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('div', class_ = "ProductPrice-module--productItemPrice__2rpyB")
-                    name = soup.find('h1', class_ = "primary product-item-headline")
+                    price = soup.find('div', class_ = "ProductPrice-module--productItemPrice__2rpyB").string
+                    name = soup.find('h1', class_ = "primary product-item-headline").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
                     new_item = Model(name=name, link=item_name, site_name='hm', image=image_link, price=price)
@@ -163,7 +163,15 @@ def index():
                     db.session.commit()
                     return redirect('/')
                 except:
+<<<<<<< Updated upstream
                     return redirect('/')
+=======
+                    return redirect('/')     
+
+            if flag == 0:
+                return redirect('bs4 not written for website') 
+
+>>>>>>> Stashed changes
         else:
             items = Model.query.order_by(Model.date_added).all()
             return render_template('index.html', items=items)
