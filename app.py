@@ -55,7 +55,6 @@ def index():
                     name = soup.find('h2', class_ = "product-name").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
-                    time.sleep(3)
                     new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
 
                     db.session.add(new_item)
@@ -66,13 +65,12 @@ def index():
 
             if 'bewakoof' in item_name :
                 try:
-                    req = requests.get('https://www.bewakoof.com/p/navy-blue-plain-full-sleeve-round-neck-men-t-shirt')
+                    req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
                     price = soup.find('span', id = "testNetProdPrice").string
                     name = soup.find('h1', id = "testProName").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
-                    time.sleep(3)
                     new_item = Model(name=name, link=item_name, site_name='Bewakoof', image=image_link, price=price)
 
                     db.session.add(new_item)
