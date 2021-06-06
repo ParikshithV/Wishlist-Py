@@ -5,6 +5,7 @@ from datetime import datetime
 import pytz
 import time
 
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -60,21 +61,41 @@ def index():
         if request.method == 'POST':
 
             item_name = request.form['content']
-            try:
-                req = requests.get(item_name)
-                soup = BeautifulSoup(req.content,'html.parser')
-                price = soup.find('span',id="our_price_display").string
-                name = soup.find('h2', class_ = "product-name").string
-                image = soup.find_all('img')
-                image_link = image[2]['src']
-                time.sleep(3)
-                new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
+            if 'streetstylestore' in item_name :
+                try:
+                    req = requests.get(item_name)
+                    soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('span',id="our_price_display").string
+                    name = soup.find('h2', class_ = "product-name").string
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    time.sleep(3)
+                    new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
 
-                db.session.add(new_item)
-                db.session.commit()
-                return redirect('/')
-            except:
-                return redirect('/')
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')
+
+            if 'bewakoof' in item_name :
+                try:
+                    req = requests.get('https://www.bewakoof.com/p/navy-blue-plain-full-sleeve-round-neck-men-t-shirt')
+                    soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('span', id = "testNetProdPrice").string
+                    name = soup.find('h1', id = "testProName").string
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    time.sleep(3)
+                    new_item = Model(name=name, link=item_name, site_name='Bewakoof', image=image_link, price=price)
+
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')
+
+
         
         else:
             items = Model.query.order_by(Model.date_added).all()
@@ -174,6 +195,38 @@ def delete(name):
         except:
             return 'Error deleting data'
     else:
-        return redirect('/')        
+        return redirect('/')      
+
+
+@app.route('/update/<string:link>', methods=['GET', 'POST'])
+def update(link):
+    if 'username' in session:
+        username = session['username']
+        class Model(db.Model):
+            __tablename__=username
+            __table_args__ = {'extend_existing': True} 
+            name = db.Column(db.String, primary_key=True)
+            link = db.Column(db.String)    #add nullable=False
+            site_name = db.Column(db.String)
+            image = db.Column(db.Unicode)
+            price = db.Column(db.String, default=0)
+            date_added = db.Column(db.DateTime, default=datetime_ind)
+
+
+        req = requests.get(link)
+        soup = BeautifulSoup(req.content,'html.parser')
+        price = soup.find('span',id="our_price_display").string
+
+
+        session.query().\
+        filter(Model.link == link).\
+        update({"price": price})
+        session.commit()
+
+
+    else:
+        return redirect('/signin')   
+
+
 if __name__ == "__main__":
     app.run(debug=True)
