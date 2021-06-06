@@ -21,17 +21,6 @@ meta = MetaData()
 
 engine = create_engine('sqlite:///wishlist.db', echo = True)
 
-class Wishlist(db.Model):
-    name = db.Column(db.String, primary_key=True)
-    link = db.Column(db.String)    #add nullable=False
-    site_name = db.Column(db.String)
-    image = db.Column(db.Unicode)
-    price = db.Column(db.String, default=0)
-    date_added = db.Column(db.DateTime, default=datetime_ind)
-
-    def __repr__(self):
-        return '<Item %r>' % self.id
-
 class Users(db.Model):
     username = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)    
@@ -39,13 +28,9 @@ class Users(db.Model):
     def __repr__(self):
         return '<Item %r>' % self.id
 
-
 @app.route('/', methods=['POST','GET'])
 def index():
     if 'username' in session:
-        tables_dict = {table.__tablename__: table for table in db.Model.__subclasses__()}
-        def table_object(table_name):
-            return tables_dict.get(table_name)
 
         username = session['username']
         class Model(db.Model):
@@ -61,6 +46,7 @@ def index():
         if request.method == 'POST':
 
             item_name = request.form['content']
+
             if 'streetstylestore' in item_name :
                 try:
                     req = requests.get(item_name)
@@ -94,8 +80,6 @@ def index():
                     return redirect('/')
                 except:
                     return redirect('/')
-
-
         
         else:
             items = Model.query.order_by(Model.date_added).all()
@@ -162,16 +146,11 @@ def signin():
         else:
             return 'User does not exist <br><a href="/signin">Try again</a>'
     else:
-        return render_template('signin.html')
-    
-            
+        return render_template('signin.html')        
 
 @app.route('/delete/<string:name>')
 def delete(name):
     if 'username' in session:
-        tables_dict = {table.__tablename__: table for table in db.Model.__subclasses__()}
-        def table_object(table_name):
-            return tables_dict.get(table_name)
 
         username = session['username']
 
