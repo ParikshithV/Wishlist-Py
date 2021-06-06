@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block head %} 
+<title>Wishlist</title>
+{% endblock %}
+
+{% block body %}
+<h1>Wishlist</h1>
+<h3>Add to Wishlist</h3>
+<div class="content"></div>
+    <form action="/alternate", method="POST">
+        <label>Item name : </label>
+        <input class="txtbx" type="text" name="name" placeholder="   Required" required><br>
+        <label>Item link : </label>
+        <input class="txtbx" type="text" name="item_name" value="{{item_name}}" required><br>
+        <label>Website name : </label>
+        <input class="txtbx" type="text" name="site_name" placeholder="   Required" required><br>
+        <label>Product image link (copy image address) : </label><br>
+        <input class="txtbx" type="url" name="img_link" placeholder="Recomended"><br>
+        <label>Price : </label>
+        <input class="txtbx" type="text" name="price" placeholder="   Required" required><br>
+        <input type="submit"/>
+    </form>
+</div>
+{% endblock %}

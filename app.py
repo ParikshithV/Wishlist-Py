@@ -8,8 +8,6 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-sesh = 'Signin'
-
 tz = pytz.timezone('Asia/Kolkata')
 datetime_ind = datetime.now(tz)
 
@@ -32,6 +30,7 @@ class Users(db.Model):
 @app.route('/', methods=['POST','GET'])
 def index():
     if 'username' in session:
+
         username = session['username']
         class Model(db.Model):
             __tablename__=username
@@ -81,117 +80,54 @@ def index():
                 except:
                     return redirect('/')
 
-            if 'kavoos' in item_name :
-                flag = 1
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',class_="pd-price")
-                    name = soup.find('div', class_ = "product-name")
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='kavoos', image=image_link, price=price)
-
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')
-
-            if 'juneshop' in item_name :
-                flag = 1
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',class_="ProductMeta__Price Price Price--highlight Text--subdued u-h4")
-                    name = soup.find('h1', class_ ="ProductMeta__Title Heading u-h2")
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='juneshop', image=image_link, price=price)
-
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')  
-
-            if 'home4u' in item_name :
-                flag = 1
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',id="ProductPrice-6751746064539")
-                    name = soup.find('h1', class_ ="h2 product-single__title")
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')        
-
-            if 'pepperfry' in item_name :
-                flag = 1
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',class_="v-price-mrp-amt-only")
-                    name = soup.find('h1', class_ ="v-pro-ttl pf-medium-bold-text")
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='pepperfry', image=image_link, price=price)
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')
-
-            if 'ladder' in item_name :
-                flag = 1
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('div',class_="price discounted-price")
-                    name = soup.find('h1', class_ ="product-title")
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='ladder', image=image_link, price=price)
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')
-
-            if 'hm' in item_name :
-                flag = 1
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('div', class_ = "ProductPrice-module--productItemPrice__2rpyB")
-                    name = soup.find('h1', class_ = "primary product-item-headline")
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='hm', image=image_link, price=price)
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')     
-
             if flag == 0:
-                # session['item_name'] = item_name
-                # return redirect('/alternate')
-                pass
+                return render_template('alternate.html', item_name=item_name)
 
         else:
             items = Model.query.order_by(Model.date_added).all()
-            sesh = 'Signout'
-            return render_template('index.html', items=items, sesh=sesh)
+            wsr = 'Bewakoof.com, StyleStreetStore.'
+            sesh='Logout'
+            return render_template('index.html', items=items, wsr = wsr, sesh=sesh)
     else:
         return redirect('/signin')
 
-# @app.route('/alternate', methods=['POST','GET'])
+@app.route('/sesh')
+def sesh():
+    if 'username' in session:
+        session.clear()
+        return redirect('/')
+    else:
+        return redirect('/')
+
+@app.route('/alternate', methods=['POST','GET'])
+def alternate():
+    username = session['username']
+    class Model(db.Model):
+        __tablename__=username
+        __table_args__ = {'extend_existing': True} 
+        name = db.Column(db.String, primary_key=True)
+        link = db.Column(db.String)    #add nullable=False
+        site_name = db.Column(db.String)
+        image = db.Column(db.Unicode)
+        price = db.Column(db.String, default=0)
+        date_added = db.Column(db.DateTime, default=datetime_ind)
+
+    if request.method == 'POST':    
+        # try:
+        # name=name, link=item_name, site_name='Bewakoof', image=image_link, price=price
+        item_name = request.form['item_name']
+        name = request.form['name']
+        site_name = request.form['site_name']
+        image_link = request.form['img_link']
+        price = request.form['price']
+        
+        new_item = Model(name=name, link=item_name, site_name=site_name, image=image_link, price=price)
+
+        db.session.add(new_item)
+        db.session.commit()
+        return redirect('/')
+        # except:
+        #     return redirect('/')
 
 @app.route('/register', methods=['POST','GET'])
 def register():
@@ -254,20 +190,6 @@ def signin():
     else:
         return render_template('signin.html')        
 
-@app.route('/signout')
-def signout():
-    session.clear()
-    return redirect('/')
-
-@app.route('/sesh')
-def sesh():
-    if 'username' in session:
-        session.clear()
-        return redirect('/')
-    else:
-        return redirect('/')
-
-
 @app.route('/delete/<string:name>')
 def delete(name):
     if 'username' in session:
@@ -287,16 +209,16 @@ def delete(name):
         item_to_delete = Model.query.get_or_404(name)
 
         try:
+            # Model.query.filter_by(name=name).delete()
             db.session.delete(item_to_delete)
             db.session.commit()
             return redirect('/')
         except:
-            return 'Error deleting data <br><a href="/">Go back</a>'
+            return 'Error deleting data'
     else:
         return redirect('/')      
 
 
-# Update functionality to be worked on (not functional)
 @app.route('/update/<string:link>', methods=['GET', 'POST'])
 def update(link):
     if 'username' in session:
