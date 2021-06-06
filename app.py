@@ -5,9 +5,10 @@ from datetime import datetime
 import pytz
 import time
 
-
 import requests
 from bs4 import BeautifulSoup
+
+sesh = 'Signin'
 
 tz = pytz.timezone('Asia/Kolkata')
 datetime_ind = datetime.now(tz)
@@ -31,7 +32,6 @@ class Users(db.Model):
 @app.route('/', methods=['POST','GET'])
 def index():
     if 'username' in session:
-
         username = session['username']
         class Model(db.Model):
             __tablename__=username
@@ -44,10 +44,11 @@ def index():
             date_added = db.Column(db.DateTime, default=datetime_ind)
         
         if request.method == 'POST':
-
+            flag = 0
             item_name = request.form['content']
 
             if 'streetstylestore' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
@@ -64,6 +65,7 @@ def index():
                     return redirect('/')
 
             if 'bewakoof' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
@@ -78,7 +80,9 @@ def index():
                     return redirect('/')
                 except:
                     return redirect('/')
+
             if 'kavoos' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
@@ -93,7 +97,9 @@ def index():
                     return redirect('/')
                 except:
                     return redirect('/')
+
             if 'juneshop' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
@@ -108,7 +114,9 @@ def index():
                     return redirect('/')
                 except:
                     return redirect('/')  
+
             if 'home4u' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
@@ -121,8 +129,10 @@ def index():
                     db.session.commit()
                     return redirect('/')
                 except:
-                    return redirect('/')                       
+                    return redirect('/')        
+
             if 'pepperfry' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
@@ -136,7 +146,9 @@ def index():
                     return redirect('/')
                 except:
                     return redirect('/')
+
             if 'ladder' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
@@ -150,7 +162,9 @@ def index():
                     return redirect('/')
                 except:
                     return redirect('/')
+
             if 'hm' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
@@ -163,12 +177,21 @@ def index():
                     db.session.commit()
                     return redirect('/')
                 except:
-                    return redirect('/')
+                    return redirect('/')     
+
+            if flag == 0:
+                # session['item_name'] = item_name
+                # return redirect('/alternate')
+                pass
+
         else:
             items = Model.query.order_by(Model.date_added).all()
-            return render_template('index.html', items=items)
+            sesh = 'Signout'
+            return render_template('index.html', items=items, sesh=sesh)
     else:
         return redirect('/signin')
+
+# @app.route('/alternate', methods=['POST','GET'])
 
 @app.route('/register', methods=['POST','GET'])
 def register():
@@ -231,6 +254,20 @@ def signin():
     else:
         return render_template('signin.html')        
 
+@app.route('/signout')
+def signout():
+    session.clear()
+    return redirect('/')
+
+@app.route('/sesh')
+def sesh():
+    if 'username' in session:
+        session.clear()
+        return redirect('/')
+    else:
+        return redirect('/')
+
+
 @app.route('/delete/<string:name>')
 def delete(name):
     if 'username' in session:
@@ -250,16 +287,16 @@ def delete(name):
         item_to_delete = Model.query.get_or_404(name)
 
         try:
-            # Model.query.filter_by(name=name).delete()
             db.session.delete(item_to_delete)
             db.session.commit()
             return redirect('/')
         except:
-            return 'Error deleting data'
+            return 'Error deleting data <br><a href="/">Go back</a>'
     else:
         return redirect('/')      
 
 
+# Update functionality to be worked on (not functional)
 @app.route('/update/<string:link>', methods=['GET', 'POST'])
 def update(link):
     if 'username' in session:
