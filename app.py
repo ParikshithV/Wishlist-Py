@@ -130,7 +130,7 @@ def index():
                     name = soup.find('h1', class_ ="v-pro-ttl pf-medium-bold-text")
                     image = soup.find_all('img')
                     image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
+                    new_item = Model(name=name, link=item_name, site_name='pepperfry', image=image_link, price=price)
                     db.session.add(new_item)
                     db.session.commit()
                     return redirect('/')
@@ -144,7 +144,7 @@ def index():
                     name = soup.find('h1', class_ ="product-title")
                     image = soup.find_all('img')
                     image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
+                    new_item = Model(name=name, link=item_name, site_name='ladder', image=image_link, price=price)
                     db.session.add(new_item)
                     db.session.commit()
                     return redirect('/')
@@ -158,7 +158,7 @@ def index():
                     name = soup.find('h1', class_ = "primary product-item-headline")
                     image = soup.find_all('img')
                     image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
+                    new_item = Model(name=name, link=item_name, site_name='hm', image=image_link, price=price)
                     db.session.add(new_item)
                     db.session.commit()
                     return redirect('/')
