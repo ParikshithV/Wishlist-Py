@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, 
 from datetime import datetime
 import pytz
 import time
-
+import re
 import requests
 from bs4 import BeautifulSoup
 
