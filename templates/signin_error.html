@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block head %} 
+<title>Wishlist</title>
+<style>
+    body {
+      font-family: Helvetica, sans-serif;
+    }
+</style>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% endblock %}
+
+{% block body %}
+    <!-- Just for visual reasons -->
+    <h1>Wishlist</h1>
+    <h3>Signin</h3>
+    <div class="content"></div>
+        <form action="/signin", method="POST">
+            <label>Username : </label>
+            <input class="txtbx" type="text" id="username" name="username" placeholder="   Required" required><br>
+            <label>Enter new password : </label>
+            <input  class="txtbx" name="password" type="password" id="password" required placeholder="Enter Password" /><br><br>
+            <input type="submit"/><br>
+            <h4>New user? <a class="navbar-brand" href="/register">Register</a><h4>
+        </form>
+    </div>
+
+    <script>
+    swal({
+        title: 'Error',
+        text: "Invalid username or password",
+        icon: 'error',
+        button: "Try again",
+    }).then((value) => {
+        window.location.href = "/signin";
+    });
+</script>
+{% endblock %}

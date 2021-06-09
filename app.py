@@ -64,9 +64,7 @@ def index():
                 except AttributeError:
                     item_link = item_name
                     prodNum = ''.join(filter(lambda i: i.isdigit(), item_link))
-                    print("=================Debug============ "+item_name)
                     req = "https://streetstylestore.com/index.php?id_product="+prodNum+"&controller=product"
-                    print(req)
                     reqToFilter = requests.get(req)
                     soup = BeautifulSoup(reqToFilter.content,'html.parser')
                     price = soup.find('span',id="our_price_display").string
@@ -90,7 +88,7 @@ def index():
                     name = soup.find('h1', id = "testProName").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='Bewakoof', image=image_link, price=price)
+                    new_item = Model(name=name, link=item_name, site_name='Bewakoof', image=image_link, price="Rs "+price)
 
                     db.session.add(new_item)
                     db.session.commit()
@@ -178,7 +176,7 @@ def register():
 
         try:
             if(bool(db.session.query(Users).filter_by(username=username).first())):
-                return 'Try different username<br><a href="/register">Try again</a>'
+                return render_template('reg_error.html')
             else:
                 new_user = Users(username=username, password=password)
 
@@ -202,9 +200,9 @@ def signin():
                 session['username'] = username
                 return redirect('/')
             else:
-                return 'Wrong password <br><a href="/signin">Try again</a>'
+                return render_template('signin_error.html')
         else:
-            return 'User does not exist <br><a href="/signin">Try again</a>'
+            return render_template('signin_error.html')
     else:
         return render_template('signin.html')        
 
