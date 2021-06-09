@@ -1,4 +1,3 @@
-import re
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, insert, Unicode, DateTime
