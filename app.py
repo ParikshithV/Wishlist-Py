@@ -190,6 +190,18 @@ def register():
 
 @app.route('/signin', methods=['POST','GET'])
 def signin():
+
+    usersdb = create_engine('sqlite:///wishlist.db', echo = True)
+    meta = MetaData()
+
+    users = Table(
+        'users', meta, 
+        Column('username', String, primary_key = True), 
+        Column('password', String),
+    )
+    
+    meta.create_all(usersdb)
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
