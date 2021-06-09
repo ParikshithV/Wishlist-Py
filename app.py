@@ -1,3 +1,4 @@
+import re
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, insert, Unicode, DateTime
@@ -51,6 +52,23 @@ def index():
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('span',id="our_price_display").string
+                    name = soup.find('h2', class_ = "product-name").string
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
+
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except AttributeError:
+                    item_link = item_name
+                    prodNum = ''.join(filter(lambda i: i.isdigit(), item_link))
+                    print("=================Debug============ "+item_name)
+                    req = "https://streetstylestore.com/index.php?id_product="+prodNum+"&controller=product"
+                    print(req)
+                    reqToFilter = requests.get(req)
+                    soup = BeautifulSoup(reqToFilter.content,'html.parser')
                     price = soup.find('span',id="our_price_display").string
                     name = soup.find('h2', class_ = "product-name").string
                     image = soup.find_all('img')
