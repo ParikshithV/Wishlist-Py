@@ -61,22 +61,35 @@ def index():
                     db.session.commit()
                     return redirect('/')
                 except AttributeError:
-                    item_link = item_name
-                    prodNum = ''.join(filter(lambda i: i.isdigit(), item_link))
-                    req = "https://streetstylestore.com/index.php?id_product="+prodNum+"&controller=product"
-                    reqToFilter = requests.get(req)
-                    soup = BeautifulSoup(reqToFilter.content,'html.parser')
-                    price = soup.find('span',id="our_price_display").string
-                    name = soup.find('h2', class_ = "product-name").string
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
+                    try:
+                        item_link = item_name
+                        prodNum = ''.join(filter(lambda i: i.isdigit(), item_link))
+                        req = "https://streetstylestore.com/index.php?id_product="+prodNum+"&controller=product"
+                        reqToFilter = requests.get(req)
+                        soup = BeautifulSoup(reqToFilter.content,'html.parser')
+                        price = soup.find('span',id="our_price_display").string
+                        name = soup.find('h2', class_ = "product-name").string
+                        image = soup.find_all('img')
+                        image_link = image[2]['src']
+                        new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
 
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')
+                        db.session.add(new_item)
+                        db.session.commit()
+                        return redirect('/')
+                    except:
+                        try:
+                            req = requests.get(item_name)
+                            soup = BeautifulSoup(req.content,'html.parser')                        
+                            name = soup.find('title').string
+                            image = soup.find_all('img')
+                            image_link = image[0]['src']
+                            new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price='NA')
+
+                            db.session.add(new_item)
+                            db.session.commit()
+                            return redirect('/')
+                        except:
+                            return redirect('/')
 
             if 'bewakoof' in item_name :
                 flag = 1

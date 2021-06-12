@@ -1,0 +1,35 @@
+.navMenu {
+    overflow: hidden;
+    background: #db5656;
+    margin-left: -25px;
+    margin-top: -10px;
+    margin-right: -25px;
+    padding: 10px;
+    font-family: Helvetica, sans-serif;
+    width: 103%;
+    border-right: 1000px;
+}
+
+.navMenu a {
+    color: white;
+    text-decoration: none;
+    font-size: 1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    display: inline-block;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .navMenu a:hover {
+    color: black;
+    background-color: #c4c4c4;
+    border-radius: 90px;
+  }
+
+  .navbarlink {
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+  }

@@ -1,40 +1,43 @@
 {% extends 'base.html' %}
 
 {% block head %} 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 <title>Wishlist</title>
 {% endblock %}
 
 {% block body %}
 <h1>Wishlist</h1>
 <div class="content"></div>
-    <form action="/", method="POST">
-        <input type="url" name="content" id="content"
-       placeholder="https://example.com/" required>
-        <input type="submit" value="add item">
-        <h4>Automatic-data entry websites: {{wsr}}</h4>
+    <form class="inptfrm" action="/", method="POST">
+        <input type="url" name="content" class="question" required>
+        <label for="nme"><span>Paste link here to add to list</span></label>  
+        <input type="submit" class="btn" value="add item"><br>
+        <p><u><b>Automatic-data entry websites:</u> </b>{{wsr}}</p>
+        <p style="font-size: small;">&#9888; Items from the above websites will not be added <b>if link is invalid</b> or if already exists in list.</p>
     </form>
     <br>
 
     <table>
         <tr>
             <th>Image</th>
-            <th>Item name</th>
-            <th>Item link</th>
-            <th>Site name</th>
-            <th>Price</th>
-            <th>Date added</th>
-            <th>Actions</th>
+            <th>Item / page name</th>
+            <th>Store link</th>
+            <th></th>
         </tr>
         {% for item in items %}
             <tr>
-                <td><img width="100" height="160" src='{{ item.image }}' ></td>
-                <td>{{ item.name }}</td>
-                <td><a href="{{item.link}}" target="_blank">Product page</a></td>
-                <td>{{ item.site_name }}</td>
-                <td>{{ item.price }}</td>
-                <td>{{ item.date_added.date() }}</td>
+                <td id="imagecell"><img src='{{ item.image }}' ></td>
+
+                <td>{{ item.name }}<br><br>Price: {{ item.price }}<br><br>
+                    <details>Date added: {{ item.date_added.date() }}<br>
+                        From: {{ item.site_name }}
+                        <summary>Details</summary></details></td>
+                </td>
+
+                <td><a href="{{item.link}}" target="_blank">Product(s) page</a></td>
+
                 <td>
-                    <a href="/delete/{{item.name}}">Delete</a>
+                    <a href="/delete/{{item.name}}">Remove</a>
                     <!-- <a href="/update/{{item.link}}">Update</a> -->
                 </td>
             </tr>
