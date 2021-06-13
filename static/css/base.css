@@ -50,7 +50,8 @@ td {
 
 .commontable {
   border-collapse: collapse;
-  width: 420px;
+  max-width: 400px;
+  width: 90%;
   border-style: hidden; /* hide standard table (collapsed) border */
   box-shadow: 0 0 0 2px rgba(102, 102, 102, 0.212);
   border-radius: 25px;
