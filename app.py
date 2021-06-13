@@ -99,7 +99,7 @@ def index():
                     price = soup.find('span', id = "testNetProdPrice").string
                     name = soup.find('h1', id = "testProName").string
                     image = soup.find_all('img')
-                    image_link = image[2]['src']
+                    image_link = image[1]['src']
                     new_item = Model(name=name, link=item_name, site_name='Bewakoof.com', image=image_link, price="Rs "+price)
 
                     db.session.add(new_item)
