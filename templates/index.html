@@ -12,36 +12,31 @@
         <input type="url" name="content" class="question" required>
         <label for="nme"><span>Paste link here to add to list</span></label>  
         <input type="submit" class="btn" value="add item"><br>
-        <p><u><b>Automatic-data entry websites:</u> </b>{{wsr}}</p>
-        <p style="font-size: small;">&#9888; Items from the above websites will not be added <b>if link is invalid</b> or if already exists in list.</p>
+        <p><u><b>Automatic-data entry websites:</u><br></b>{{wsr}}</p>
+        <p style="font-size: small;">&#9888; Items from the above websites will not be added <b>if link is invalid</b> or if already exists below.</p>
+        <br>
     </form>
-    <br>
+</div>
 
-    <table>
-        <tr>
-            <th>Image</th>
-            <th>Item / page name</th>
-            <th>Store link</th>
-            <th></th>
-        </tr>
-        {% for item in items %}
-            <tr>
-                <td id="imagecell"><img src='{{ item.image }}' ></td>
+<div class="wrapper">
+{% for item in items %}
+<div style="max-width: 190px;">
+    <table id="container">
+        <tr><td style="padding: 5px;">{{ item.site_name }}</td></tr>
+        <tr><td id="imagecell">
+            <a href="{{item.link}}" target="_blank">
+            <img src='{{ item.image }}'></td></tr></a>
 
-                <td>{{ item.name }}<br><br>Price: {{ item.price }}<br><br>
-                    <details>Date added: {{ item.date_added.date() }}<br>
-                        From: {{ item.site_name }}
-                        <summary>Details</summary></details></td>
-                </td>
+        <tr><td>{{ item.name }}<br>
+        <br>Price: {{ item.price }}</td></tr>
 
-                <td><a href="{{item.link}}" target="_blank">Product(s) page</a></td>
-
-                <td>
-                    <a href="/delete/{{item.name}}">Remove</a>
-                    <!-- <a href="/update/{{item.link}}">Update</a> -->
-                </td>
-            </tr>
-        {% endfor %}
+        <tr><td>
+        <a class="actlinks" href="/delete/{{item.name}}">Remove</a></td></tr>
     </table>
 </div>
+{% endfor %}
+</div>
+<footer>
+    <p>Select any image to go to product page</p>
+  </footer>
 {% endblock %}

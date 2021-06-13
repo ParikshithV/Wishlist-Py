@@ -100,7 +100,27 @@ def index():
                     name = soup.find('h1', id = "testProName").string
                     image = soup.find_all('img')
                     image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='Bewakoof', image=image_link, price="Rs "+price)
+                    new_item = Model(name=name, link=item_name, site_name='Bewakoof.com', image=image_link, price="Rs "+price)
+
+                    db.session.add(new_item)
+                    db.session.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')
+
+            if 'koovs'in item_name :
+                flag = 1
+                try:
+                    req = requests.get(item_name)
+                    soup = BeautifulSoup(req.content,'html.parser')
+                    price = soup.find('div',class_="pd-discount-price")
+                    title = soup.find('div', class_ = "product-name")
+                    image = soup.find_all('img')
+                    image_link = image[2]['src']
+                    print(title.string)
+                    print(price.string)
+                    print(image[3].src)
+                    new_item = Model(name=title.string, link=item_name, site_name='koovs', image='https://getfreedeals.co.in/wp-content/uploads/2012/08/Koovs-logo.jpg', price=price.string)
 
                     db.session.add(new_item)
                     db.session.commit()
@@ -113,7 +133,7 @@ def index():
 
         else:
             items = Model.query.order_by(Model.date_added).all()
-            wsr = 'Bewakoof.com, StyleStreetStore.'
+            wsr = 'Bewakoof.com, StyleStreetStore, Koovs.'
             sesh='Logout'
             return render_template('index.html', items=items, wsr = wsr, sesh=sesh)
     else:
@@ -147,9 +167,11 @@ def alternate():
         name = request.form['name']
         site_name = request.form['site_name']
         image_link = request.form['img_link']
+        if image_link == '':
+            image_link = 'https://static.vecteezy.com/system/resources/thumbnails/001/932/473/small_2x/shopping-bag-paper-isolated-icon-free-vector.jpg'
         price = request.form['price']
         
-        new_item = Model(name=name, link=item_name, site_name=site_name, image=image_link, price=price)
+        new_item = Model(name=name, link=item_name, site_name=site_name, image=image_link, price='Rs.'+price)
 
         db.session.add(new_item)
         db.session.commit()
