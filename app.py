@@ -163,15 +163,7 @@ def index():
                     db.session.commit()
                     return redirect('/')
                 except:
-<<<<<<< Updated upstream
                     return redirect('/')
-=======
-                    return redirect('/')     
-
-            if flag == 0:
-                return redirect('bs4 not written for website') 
-
->>>>>>> Stashed changes
         else:
             items = Model.query.order_by(Model.date_added).all()
             return render_template('index.html', items=items)
