@@ -116,10 +116,7 @@ def index():
                     price = soup.find('div',class_="pd-discount-price")
                     title = soup.find('div', class_ = "product-name")
                     image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    print(title.string)
-                    print(price.string)
-                    print(image[3].src)
+                    #image_link = image[2]['src']
                     new_item = Model(name=title.string, link=item_name, site_name='koovs', image='https://getfreedeals.co.in/wp-content/uploads/2012/08/Koovs-logo.jpg', price=price.string)
 
                     db.session.add(new_item)

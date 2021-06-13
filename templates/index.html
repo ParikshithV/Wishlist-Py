@@ -20,19 +20,18 @@
 
 <div class="wrapper">
 {% for item in items %}
-<div style="max-width: 190px;">
-    <table id="container">
-        <tr><td style="padding: 5px;">{{ item.site_name }}</td></tr>
-        <tr><td id="imagecell">
-            <a href="{{item.link}}" target="_blank">
-            <img src='{{ item.image }}'></td></tr></a>
-
-        <tr><td>{{ item.name }}<br>
-        <br>Price: {{ item.price }}</td></tr>
-
-        <tr><td>
-        <a class="actlinks" href="/delete/{{item.name}}">Remove</a></td></tr>
-    </table>
+<div class="card">
+    <a class="imgbtn" href="{{item.link}}" target="_blank"><img src='{{ item.image }}'></a>
+    
+    <div style="padding: 0 5px;" class="prodd">
+        <h4>{{ item.name }}</h4>
+        <p>Store: {{ item.site_name }}</p>
+        <p>Price: {{ item.price }}</p>
+        
+        <a class="actlinks" href="/delete/{{item.name}}">Remove</a>
+    </div>
+    
+    
 </div>
 {% endfor %}
 </div>

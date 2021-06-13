@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 h1 {
   text-align: center;
   font-size: 25px;
@@ -9,14 +15,10 @@ h1 {
 }
 
 .navMenu {
-  overflow: hidden;
   background: #db5656;
-  margin-left: -25px;
-  margin-top: -10px;
   padding: 10px;
-  padding-left: 20px;
   font-family: Helvetica, sans-serif;
-  width: 100.5%;
+  width: 100%;
 }
 
 .navMenu a {
