@@ -6,14 +6,22 @@
 
 {% block body %}
 <h1>Wishlist</h1>
-<h3>Signin</h3>
+<center><h3>Signin</h3>
 <div class="content"></div>
     <form action="/signin", method="POST">
-        <label>Username : </label>
-        <input class="txtbx" type="text" id="username" name="username" placeholder="   Required" required><br>
-        <label>Enter new password : </label>
-        <input  class="txtbx" name="password" type="password" id="password" required placeholder="Enter Password" /><br><br>
-        <input type="submit"/>
+        <table class="commontable">
+            <tr><td><label>Username: </label></td>
+            <td><input class="txtbx" type="text" id="username" name="username" placeholder="   Required" required>
+            </td></tr>
+            <tr><td><label>Enter password: </label></td>
+            <td><input class="txtbx" name="password" type="password" id="password" required placeholder="Enter Password" />
+            </td></tr>
+            <tr>
+                <td></td>
+                <td><input class="btn" style="float: right;" type="submit"/></td></tr>
+            <tr><td colspan="2" style="text-align: center;"><b>New user? <a class="navbar-brand" href="/register">Register</a></b></td></tr>
+            <tr><td></td></tr>
+        </table>
     </form>
-</div>
+</div><center>
 {% endblock %}

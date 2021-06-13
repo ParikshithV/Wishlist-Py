@@ -2,11 +2,18 @@
 
 {% block head %} 
 <title>Wishlist</title>
+<style>
+    body {
+      font-family: Helvetica, sans-serif;
+    }
+</style>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 {% endblock %}
 
 {% block body %}
-<h1>Wishlist</h1>
-<center><h3>Register</h3>
+    <!-- Just for visual reasons -->
+    <h1>Wishlist</h1>
+    <center><h3>Register</h3>
     <div class="content"></div>
         <form action="/register", method="POST">
             <table class="commontable">
@@ -24,4 +31,15 @@
             </table>
         </form>
     </div><center>
+
+    <script>
+        swal({
+            title: 'Username taken',
+            text: "Try unique username",
+            icon: 'warning',
+            button: "Try again",
+        }).then((value) => {
+            window.location.href = "/register";
+        });
+    </script>
 {% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block head %} 
+<title>Wishlist</title>
+{% endblock %}
+
+{% block body %}
+<h1>Wishlist</h1>
+<center><h3>Add to Wishlist</h3>
+<div class="content"></div>
+    <form action="/alternate", method="POST">
+        <table class="commontable">
+            <tr>
+                <td><label>Item name : </label></td>
+                <td><input class="txtbx" type="text" name="name" placeholder="   Required" required></tr>
+            </td>
+            <tr>
+                <td><label>Item link : </label></td>
+                <td><input class="txtbx" type="text" name="item_name" value="{{item_name}}" required></td>
+            </tr>
+            <tr>
+                <td><label>Website name : </label></td>
+                <td><input class="txtbx" type="text" name="site_name" placeholder="   Required" required>
+            </td></tr>
+            <tr>
+                <td><label>Product image link<br>(copy image address) : </label></td>
+                <td><input class="txtbx" type="url" name="img_link" placeholder="   Recomended">
+            </td></tr>
+            <tr>
+                <td><label>Price : </label></td>
+                <td><input class="txtbx" type="number" name="price" placeholder="   Required" required></td>        
+            <tr>
+                <td></td>
+                <td><input class="btn" type="button" onclick="location.href='/'" value="Cancel">
+                <input class="btn" type="submit"/></td>
+            </tr>
+        </table>
+    </form>
+</div></center>
+{% endblock %}

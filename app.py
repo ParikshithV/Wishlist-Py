@@ -4,8 +4,7 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, 
 from datetime import datetime
 import pytz
 import time
-
-
+import re
 import requests
 from bs4 import BeautifulSoup
 
@@ -44,10 +43,11 @@ def index():
             date_added = db.Column(db.DateTime, default=datetime_ind)
         
         if request.method == 'POST':
-
+            flag = 0
             item_name = request.form['content']
 
             if 'streetstylestore' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
@@ -60,124 +60,121 @@ def index():
                     db.session.add(new_item)
                     db.session.commit()
                     return redirect('/')
-                except:
-                    return redirect('/')
+                except AttributeError:
+                    try:
+                        item_link = item_name
+                        prodNum = ''.join(filter(lambda i: i.isdigit(), item_link))
+                        req = "https://streetstylestore.com/index.php?id_product="+prodNum+"&controller=product"
+                        reqToFilter = requests.get(req)
+                        soup = BeautifulSoup(reqToFilter.content,'html.parser')
+                        price = soup.find('span',id="our_price_display").string
+                        name = soup.find('h2', class_ = "product-name").string
+                        image = soup.find_all('img')
+                        image_link = image[2]['src']
+                        new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price=price)
+
+                        db.session.add(new_item)
+                        db.session.commit()
+                        return redirect('/')
+                    except:
+                        try:
+                            req = requests.get(item_name)
+                            soup = BeautifulSoup(req.content,'html.parser')                        
+                            name = soup.find('title').string
+                            image = soup.find_all('img')
+                            image_link = image[0]['src']
+                            new_item = Model(name=name, link=item_name, site_name='SSS', image=image_link, price='NA')
+
+                            db.session.add(new_item)
+                            db.session.commit()
+                            return redirect('/')
+                        except:
+                            return redirect('/')
 
             if 'bewakoof' in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
                     price = soup.find('span', id = "testNetProdPrice").string
                     name = soup.find('h1', id = "testProName").string
                     image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='Bewakoof', image=image_link, price=price)
+                    image_link = image[1]['src']
+                    new_item = Model(name=name, link=item_name, site_name='Bewakoof.com', image=image_link, price="Rs "+price)
 
                     db.session.add(new_item)
                     db.session.commit()
                     return redirect('/')
                 except:
                     return redirect('/')
-            if 'kavoos' in item_name :
+
+            if 'koovs'in item_name :
+                flag = 1
                 try:
                     req = requests.get(item_name)
                     soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',class_="pd-price").string
-                    name = soup.find('div', class_ = "product-name").string
+                    price = soup.find('div',class_="pd-discount-price")
+                    title = soup.find('div', class_ = "product-name")
                     image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='kavoos', image=image_link, price=price)
+                    #image_link = image[2]['src']
+                    new_item = Model(name=title.string, link=item_name, site_name='koovs', image='https://getfreedeals.co.in/wp-content/uploads/2012/08/Koovs-logo.jpg', price=price.string)
 
                     db.session.add(new_item)
                     db.session.commit()
                     return redirect('/')
                 except:
                     return redirect('/')
-            if 'juneshop' in item_name :
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',class_="ProductMeta__Price Price Price--highlight Text--subdued u-h4").string
-                    name = soup.find('h1', class_ ="ProductMeta__Title Heading u-h2").string
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='juneshop', image=image_link, price=price)
 
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')  
-            if 'home4u' in item_name :
-                # try:
-                req = requests.get(item_name)
-                soup = BeautifulSoup(req.content,'html.parser')
-                price = soup.find('span',id="ProductPrice-6751746064539")
-                name = soup.find('h1', class_ ="h2 product-single__title").string
-                image = soup.find_all('img')
-                image_link = image[2]['src']
-                new_item = Model(name=name, link=item_name, site_name='home4u', image=image_link, price=price)
-                db.session.add(new_item)
-                db.session.commit()
-                return redirect('/')
-                # except:
-                #     return redirect('/')                       
-            if 'pepperfry' in item_name :
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('span',class_="v-price-mrp-amt-only").string
-                    name = soup.find('h1', class_ ="v-pro-ttl pf-medium-bold-text").string
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='pepperfry', image=image_link, price=price)
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')
-            if 'ladder' in item_name :
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('div',class_="price discounted-price").string
-                    name = soup.find('h1', class_ ="product-title").string
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='ladder', image=image_link, price=price)
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-                    return redirect('/')
-            if 'hm' in item_name :
-                try:
-                    req = requests.get(item_name)
-                    soup = BeautifulSoup(req.content,'html.parser')
-                    price = soup.find('div', class_ = "ProductPrice-module--productItemPrice__2rpyB").string
-                    name = soup.find('h1', class_ = "primary product-item-headline").string
-                    image = soup.find_all('img')
-                    image_link = image[2]['src']
-                    new_item = Model(name=name, link=item_name, site_name='hm', image=image_link, price=price)
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return redirect('/')
-                except:
-<<<<<<< Updated upstream
-                    return redirect('/')
-=======
-                    return redirect('/')     
+            if flag == 0:
+                return render_template('alternate.html', item_name=item_name)
 
-           
-                
-                
-
->>>>>>> Stashed changes
         else:
             items = Model.query.order_by(Model.date_added).all()
-            return render_template('index.html', items=items)
+            wsr = 'Bewakoof.com, StyleStreetStore, Koovs.'
+            sesh='Logout'
+            return render_template('index.html', items=items, wsr = wsr, sesh=sesh)
     else:
         return redirect('/signin')
+
+@app.route('/sesh')
+def sesh():
+    if 'username' in session:
+        session.clear()
+        return redirect('/')
+    else:
+        return redirect('/')
+
+@app.route('/alternate', methods=['POST','GET'])
+def alternate():
+    username = session['username']
+    class Model(db.Model):
+        __tablename__=username
+        __table_args__ = {'extend_existing': True} 
+        name = db.Column(db.String, primary_key=True)
+        link = db.Column(db.String)    #add nullable=False
+        site_name = db.Column(db.String)
+        image = db.Column(db.Unicode)
+        price = db.Column(db.String, default=0)
+        date_added = db.Column(db.DateTime, default=datetime_ind)
+
+    if request.method == 'POST':    
+        # try:
+        # name=name, link=item_name, site_name='Bewakoof', image=image_link, price=price
+        item_name = request.form['item_name']
+        name = request.form['name']
+        site_name = request.form['site_name']
+        image_link = request.form['img_link']
+        if image_link == '':
+            image_link = 'https://static.vecteezy.com/system/resources/thumbnails/001/932/473/small_2x/shopping-bag-paper-isolated-icon-free-vector.jpg'
+        price = request.form['price']
+        
+        new_item = Model(name=name, link=item_name, site_name=site_name, image=image_link, price='Rs.'+price)
+
+        db.session.add(new_item)
+        db.session.commit()
+        return redirect('/')
+        # except:
+        #     return redirect('/')
 
 @app.route('/register', methods=['POST','GET'])
 def register():
@@ -210,7 +207,7 @@ def register():
 
         try:
             if(bool(db.session.query(Users).filter_by(username=username).first())):
-                return 'Try different username<br><a href="/register">Try again</a>'
+                return render_template('reg_error.html')
             else:
                 new_user = Users(username=username, password=password)
 
@@ -225,6 +222,18 @@ def register():
 
 @app.route('/signin', methods=['POST','GET'])
 def signin():
+
+    usersdb = create_engine('sqlite:///wishlist.db', echo = True)
+    meta = MetaData()
+
+    users = Table(
+        'users', meta, 
+        Column('username', String, primary_key = True), 
+        Column('password', String),
+    )
+    
+    meta.create_all(usersdb)
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -234,9 +243,9 @@ def signin():
                 session['username'] = username
                 return redirect('/')
             else:
-                return 'Wrong password <br><a href="/signin">Try again</a>'
+                return render_template('signin_error.html')
         else:
-            return 'User does not exist <br><a href="/signin">Try again</a>'
+            return render_template('signin_error.html')
     else:
         return render_template('signin.html')        
 
