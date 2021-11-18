@@ -3,8 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, insert, Unicode, DateTime
 from datetime import datetime
 import pytz
-import time
-import re
 import requests
 from bs4 import BeautifulSoup
 
@@ -27,10 +25,42 @@ class Users(db.Model):
     def __repr__(self):
         return '<Item %r>' % self.id
 
+@app.route('/ext', methods=['POST','GET'])
+def ext():
+    print('ext route')
+    username = 'abc'
+    class Model(db.Model):
+        __tablename__=username
+        __table_args__ = {'extend_existing': True} 
+        name = db.Column(db.String, primary_key=True)
+        link = db.Column(db.String)    #add nullable=False
+        site_name = db.Column(db.String)
+        image = db.Column(db.Unicode)
+        price = db.Column(db.String, default=0)
+        date_added = db.Column(db.DateTime, default=datetime_ind)
+    if request.method == 'POST':
+        print('Got POST request')
+        item_name = request.data
+        print('Data: '+item_name)
+        if 'bewakoof' in item_name :
+            req = requests.get(item_name)
+            soup = BeautifulSoup(req.content,'html.parser')
+            price = soup.find('span', id = "testNetProdPrice").string
+            name = soup.find('h1', id = "testProName").string
+            image = soup.find_all('img')
+            image_link = image[1]['src']
+            new_item = Model(name=name, link=item_name, site_name='Bewakoof.com', image=image_link, price="Rs "+price)
+
+            db.session.add(new_item)
+            db.session.commit()
+            return redirect('/')
+    return redirect('/')
+
 @app.route('/', methods=['POST','GET'])
 def index():
+    print('Request active')
     if 'username' in session:
-
+        print('Session active')
         username = session['username']
         class Model(db.Model):
             __tablename__=username
@@ -44,8 +74,9 @@ def index():
         
         if request.method == 'POST':
             flag = 0
+            print('Got POST request')
             item_name = request.form['content']
-
+            print('data: '+item_name)
             if 'streetstylestore' in item_name :
                 flag = 1
                 try:
